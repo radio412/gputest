@@ -18,7 +18,7 @@
       var traditionalCanvas = document.createElement("canvas");
       traditionalCanvas.width = 512;
       traditionalCanvas.height = 512;
-      generateNoise = function(opacity,canvas) {
+      generateNoise = function(canvas, opacity) {
          var
          x, y,
          number,
@@ -67,9 +67,9 @@
         return proc.getCanvas();
       }
 
-      var getTraditionalCanvas = function(){
-        generateNoise(.2, traditionalCanvas);
-        return traditionalCanvas;
+      var getTraditionalCanvas = function(canvas){
+        generateNoise(canvas, .2);
+        return canvas;
       }
 
 
@@ -104,7 +104,7 @@
       // run
       var render = function () {
         var can = getGPUCanvas();
-        //var can = getTraditionalCanvas();
+        //var can = getTraditionalCanvas(traditionalCanvas);
         material.map.image = can;
         material.bumpMap.image = can;
         material.map.needsUpdate = true;
