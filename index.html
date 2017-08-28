@@ -69,7 +69,7 @@
       // create canvas functions
       var getGPUCanvas = function(){
         verts = generateRandomMulti(512);
-        proc(verts, .2);
+        proc(verts, 8);
         return proc.getCanvas();
       }
 
@@ -96,12 +96,11 @@
 
       var texture = new THREE.Texture(canvas);
 
-
       var geometry = new THREE.SphereGeometry(3, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
       var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: texture });
 
-      var light = new THREE.PointLight( new THREE.Color("rgb(255,70,3)"), 2.5);
-      var light2 = new THREE.PointLight( new THREE.Color("rgb(255,255,255)"), 4);
+      var light = new THREE.PointLight( new THREE.Color("rgb(255,180,0)"),5);
+      var light2 = new THREE.PointLight( new THREE.Color("rgb(255,255,255)"), 2);
       light.position.set( 400, -100, 800 );
       light2.position.set( 500, 500, 900 );
       var mesh = new THREE.Mesh(geometry, material);
@@ -115,9 +114,11 @@
       var html_image = document.getElementById("tex_image");
 
 
+      /////TOGGLE THE VAR "can" to grab the canvas from either the gpu or the traditional javascript canvas.
+
       var render = function () {
         var can = getGPUCanvas();
-        var can = getTraditionalCanvas(traditionalCanvas);
+        //var can = getTraditionalCanvas(traditionalCanvas);
         material.map.image = can;
         material.bumpMap.image = can;
         html_image.src = can.toDataURL();
