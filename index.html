@@ -7,6 +7,9 @@
   </head>
 
   <body>
+
+        <img id="tex_image" style="height:512px; width:512px"/>
+
   </body>
 
   <script>
@@ -37,33 +40,36 @@
 
 
       // gpu.js enhanced texture noise generation
-      generateRandomMulti = function(len, by){
-        if(by == undefined){
-          by = 1;
-        }
+      generateRandomMulti = function(len){
         var out = [];
         for (var x = 0; x <len;x++){
           var xArr = out[x] = [];
           for(var y = 0; y < len; y++){
-            xArr.push( Math.random() * by );
+            number = Math.floor( Math.random() * 80 );
+            number = number / 255;
+            xArr.push(number);
           }
         }
         return out;
       }
 
-      var v = generateRandomMulti(512, 1);
+
       const gpu = new GPU();
-      const proc = gpu.createKernel(function(v) {
+      const proc = gpu.createKernel(function(v, opacity) {
           var n = v[this.thread.x][this.thread.y];
-          this.color(n, n, n, .2);
+          this.color(n, n, n, opacity);
       }).setOutput([512, 512]).setGraphical(true);
-      proc(v);
+
+
+
+
+
 
 
       // create canvas functions
       var getGPUCanvas = function(){
-        verts = generateRandomMulti(512, .3);
-        proc(verts);
+        verts = generateRandomMulti(512);
+        proc(verts, .2);
         return proc.getCanvas();
       }
 
@@ -71,6 +77,10 @@
         generateNoise(canvas, .2);
         return canvas;
       }
+
+
+
+
 
 
 
@@ -82,10 +92,10 @@
       renderer.setSize(500, 400);
       document.body.appendChild(renderer.domElement);
 
-      var canvas = proc.getCanvas();
+      var canvas = getTraditionalCanvas(traditionalCanvas);
 
       var texture = new THREE.Texture(canvas);
-      texture.needsUpdate = true;
+
 
       var geometry = new THREE.SphereGeometry(3, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
       var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: texture });
@@ -102,11 +112,15 @@
 
 
       // run
+      var html_image = document.getElementById("tex_image");
+
+
       var render = function () {
         var can = getGPUCanvas();
-        //var can = getTraditionalCanvas(traditionalCanvas);
+        var can = getTraditionalCanvas(traditionalCanvas);
         material.map.image = can;
         material.bumpMap.image = can;
+        html_image.src = can.toDataURL();
         material.map.needsUpdate = true;
         material.bumpMap.needsUpdate = true;
           requestAnimationFrame(render);
